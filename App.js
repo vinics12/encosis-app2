@@ -6,24 +6,66 @@
  * @flow
  */
 
-import React, {Component} from 'react';
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import React, { Component } from "react";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  TouchableOpacity,
+  Image,
+  Text
+} from "react-native";
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-  android:
-    'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
+export default class App extends Component {
+  constructor(props) {
+    super(props);
 
-type Props = {};
-export default class App extends Component<Props> {
+    this.state = { gasoline: "", alcohol: "", fuel: "" };
+
+    this.updateValue = this.updateValue.bind(this);
+    this.calcule = this.calcule.bind(this);
+  }
+
+  updateValue(name, value) {
+    const obj = {};
+    obj[name] = value;
+
+    this.setState({ ...obj, fuel: "" });
+  }
+
+  calcule() {
+    let fuel = "";
+    const result = 0.7 * parseFloat(this.state.gasoline);
+    if (result > parseFloat(this.state.alcohol)) fuel = "Alcool";
+    else fuel = "Gasolina";
+
+    this.setState({ fuel });
+  }
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>Welcome to React Native!</Text>
-        <Text style={styles.instructions}>To get started, edit App.js</Text>
-        <Text style={styles.instructions}>{instructions}</Text>
+        <TextInput
+          placeholder="Gasolina"
+          style={styles.number}
+          keyboardType="numeric"
+          value={this.state.gasoline}
+          onChangeText={text => this.updateValue("gasoline", text)}
+        />
+        <TextInput
+          placeholder="Alcool"
+          style={styles.secondNumber}
+          keyboardType="numeric"
+          value={this.state.alcohol}
+          onChangeText={text => this.updateValue("alcohol", text)}
+        />
+        <TouchableOpacity onPress={() => this.calcule()}>
+          <Image
+            source={require("./img/fuel-station.png")}
+            style={styles.fuel}
+          />
+        </TouchableOpacity>
+        <Text style={styles.result}>{this.state.fuel}</Text>
       </View>
     );
   }
@@ -32,18 +74,25 @@ export default class App extends Component<Props> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    alignItems: "center"
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
+  number: {
+    width: 300,
+    height: 60,
+    marginTop: 30,
+    fontSize: 20
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  secondNumber: {
+    width: 300,
+    height: 60,
+    fontSize: 20
   },
+  fuel: {
+    width: 80,
+    height: 80
+  },
+  result: {
+    fontSize: 30,
+    margin: 20
+  }
 });
